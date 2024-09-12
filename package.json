@@ -1,0 +1,49 @@
+{
+  "name": "rust-demo-node-modules",
+  "version": "0.0.1",
+  "description": "High-Performance Node Modules with Rust",
+  "license": "MIT",
+  "private": true,
+  "repository": "bkonkle/rust-demo-node-modules",
+  "author": {
+    "name": "Brandon Konkle",
+    "email": "brandon@konkle.us"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "check": "xo",
+    "dev": "tsx src/main.ts"
+  },
+  "dependencies": {
+    "@koa/cors": "^5.0.0",
+    "@koa/router": "^13.0.0",
+    "body-parser": "^1.20.3",
+    "es-main": "^1.3.0",
+    "jwks-rsa": "^3.1.0",
+    "koa": "^2.15.3",
+    "koa-bodyparser": "^4.4.1",
+    "koa-helmet": "^7.0.2",
+    "koa-jwt": "^4.0.4",
+    "koa-morgan": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.15.0",
+    "@types/koa__cors": "^5.0.0",
+    "@types/koa__router": "^12.0.4",
+    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-helmet": "^6.0.2",
+    "@types/koa-morgan": "^1.0.8",
+    "@types/node": "~22.5.4",
+    "prettier": "^3.0.3",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2",
+    "xo": "^0.59.3"
+  },
+  "xo": {
+    "prettier": true
+  }
+}
