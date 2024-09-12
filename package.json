@@ -12,10 +12,11 @@
   "type": "module",
   "sideEffects": false,
   "engines": {
-    "node": ">=18"
+    "node": ">=21"
   },
   "scripts": {
     "check": "xo",
+    "test": "tsx --test",
     "dev": "tsx src/main.ts"
   },
   "dependencies": {

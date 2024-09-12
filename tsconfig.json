@@ -2,10 +2,10 @@
   "compilerOptions": {
     "outDir": "${configDir}/dist",
     "module": "node16",
-    "moduleResolution": "node16",
     "moduleDetection": "force",
     "target": "ES2022",
     "lib": ["ES2022"],
+    "types": ["node"],
     "declaration": false,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
