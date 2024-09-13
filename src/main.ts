@@ -1,13 +1,12 @@
 import process from 'node:process'
 import Koa from 'koa'
-import jwt from 'koa-jwt'
 import bodyParser from 'koa-bodyparser'
 import helmet from 'koa-helmet'
 import cors from '@koa/cors'
 import morgan from 'koa-morgan'
 import esMain from 'es-main'
-import jwksRsa from 'jwks-rsa'
 import {initRouter} from './router.js'
+import {jwtCheck} from './jwt.js'
 
 export async function main() {
   const app = new Koa()
@@ -15,13 +14,6 @@ export async function main() {
   const router = initRouter()
 
   const port = Number(process.env['PORT'] ?? 3000)
-
-  const authUrl = process.env['AUTH_URL']
-  if (!authUrl) {
-    throw new Error('Missing AUTH_URL')
-  }
-
-  const audience = process.env['AUTH_AUDIENCE'] ?? 'localhost'
 
   app.use(
     helmet.contentSecurityPolicy({
@@ -51,19 +43,7 @@ export async function main() {
 
   app.use(bodyParser())
 
-  app.use(
-    jwt({
-      secret: jwksRsa.koaJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 2,
-        jwksUri: `${authUrl}/.well-known/jwks.json`,
-      }),
-      audience,
-      issuer: `${authUrl}/`,
-      algorithms: ['RS256'],
-    })
-  )
+  app.use(await jwtCheck())
 
   app.use(router.routes()).use(router.allowedMethods())
 

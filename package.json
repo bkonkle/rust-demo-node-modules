@@ -27,7 +27,8 @@
     "test": "tsx --test",
     "dev": "tsx src/main.ts",
     "token": "tsx bin/token.ts",
-    "bench": "tsx bin/bench.ts"
+    "bench": "tsx bin/bench.ts",
+    "build.jwt-rsa": "cd lib/jwt_rsa && napi build --platform --release"
   },
   "dependencies": {
     "@koa/cors": "^5.0.0",

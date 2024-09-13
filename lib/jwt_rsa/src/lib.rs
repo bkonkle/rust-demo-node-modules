@@ -1,9 +1,19 @@
-#![deny(clippy::all)]
+//! jwt-rsa middleware
+
+/// The authorizer middleware
+pub mod authorizer;
+
+/// The outputs module
+pub mod outputs;
+
+/// The errors module
+pub mod errors;
+
+pub use authorizer::Authorizer;
+pub use errors::Error;
 
 #[macro_use]
 extern crate napi_derive;
 
-#[napi]
-pub fn sum(a: i32, b: i32) -> i32 {
-    a + b
-}
+#[macro_use]
+extern crate log;

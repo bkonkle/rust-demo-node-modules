@@ -1,0 +1,5 @@
+{
+  "rust-analyzer.procMacro.ignored": {
+    "napi_derive": ["napi"] // Because of https://github.com/rust-lang/rust-analyzer/issues/17429
+  }
+}

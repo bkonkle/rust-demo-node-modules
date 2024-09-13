@@ -1,3 +1,4 @@
 export AUTH_CLIENT_ID=my-client-id
 export AUTH_AUDIENCE=localhost
 export AUTH_URL=https://auth.example.com
+export USE_RUST_MODULE=true
