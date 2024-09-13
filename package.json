@@ -17,7 +17,8 @@
   "scripts": {
     "check": "xo",
     "test": "tsx --test",
-    "dev": "tsx src/main.ts"
+    "dev": "tsx src/main.ts",
+    "token": "tsx bin/token.ts"
   },
   "dependencies": {
     "@koa/cors": "^5.0.0",

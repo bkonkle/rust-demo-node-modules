@@ -42,8 +42,8 @@ Thumbs.db
 
 # dotenv environment variable files
 .env*
-!.env.example
-!.env.ci
+!.envrc.example
+!.envrc.ci
 
 # Nx
 .nx/cache
