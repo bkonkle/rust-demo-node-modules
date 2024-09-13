@@ -41,7 +41,7 @@ impl Authorizer {
             .await
             .map_err(|e| napi::Error::new(Status::InvalidArg, e.to_string()))?;
 
-        println!("JWK set with {} keys retrieved", jwks.keys.len());
+        println!("JWK set with {} keys retrieved\n", jwks.keys.len());
 
         Ok(Authorizer::new(audience, auth_url, jwks))
     }
