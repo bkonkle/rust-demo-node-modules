@@ -10,7 +10,6 @@ export function initRouter(): Router {
 }
 
 export async function getUser(context: Context): Promise<void> {
-  console.log(`>- context ->`, context)
-
   context.status = 200
+  context.body = context.state['user']
 }

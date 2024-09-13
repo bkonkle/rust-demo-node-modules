@@ -60,7 +60,7 @@ export async function main() {
         jwksUri: `${authUrl}/.well-known/jwks.json`,
       }),
       audience,
-      issuer: authUrl,
+      issuer: `${authUrl}/`,
       algorithms: ['RS256'],
     })
   )
