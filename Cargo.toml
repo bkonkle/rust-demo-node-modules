@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = ["lib/jwt_rsa"]
+
+[workspace.package]
+license = "MIT"
+edition = "2021"
+authors = ["Brandon Konkle <brandon@konkle.us>"]
+homepage = "https://github.com/bkonkle/rust-demo-node-modules"
+repository = "https://github.com/bkonkle/rust-demo-node-modules"
+
+[profile.release]
+strip = true      # Automatically strip symbols from the binary.
+opt-level = "z"   # Optimize for size.
+lto = true        # Link time optimization.
+codegen-units = 1 # Allow for maximum size reduction optimizations.

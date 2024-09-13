@@ -1,0 +1,29 @@
+[package]
+name = "jwt-rsa"
+version = "0.0.1"
+description = "A JWT RSA validator for Node written in Rust"
+documentation = "https://docs.rs/jwt-rsa/"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+anyhow = "1.0"
+biscuit = "0.7.0"
+jsonwebtoken = "9.0"
+napi = { version = "2.12.2", default-features = false, features = ["napi4"] }
+napi-derive = "2.12.2"
+reqwest = { version = "0.12", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_derive = "1.0"
+serde_json = "1.0"
+thiserror = "1.0"
+tokio = { version = "1", features = ["full"] }
+
+[build-dependencies]
+napi-build = "2.0.1"

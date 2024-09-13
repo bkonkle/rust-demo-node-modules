@@ -14,6 +14,14 @@
   "engines": {
     "node": ">=21"
   },
+  "os": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
   "scripts": {
     "check": "xo",
     "test": "tsx --test",
