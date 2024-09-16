@@ -28,7 +28,8 @@
     "dev": "tsx src/main.ts",
     "token": "tsx bin/token.ts",
     "bench": "tsx bin/bench.ts",
-    "build.jwt-rsa": "cd lib/jwt_rsa && napi build --platform --release"
+    "build.jwt-rsa": "cargo build --target wasm32-unknown-unknown --release",
+    "dist.jwt-rsa": "wasm-bindgen --target experimental-nodejs-module --out-dir ./dist ./target/wasm32-unknown-unknown/release/wasm_example.wasm"
   },
   "dependencies": {
     "@koa/cors": "^5.0.0",

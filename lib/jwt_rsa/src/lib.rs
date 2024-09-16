@@ -13,7 +13,4 @@ pub use authorizer::Authorizer;
 pub use errors::Error;
 
 #[macro_use]
-extern crate napi_derive;
-
-#[macro_use]
 extern crate log;

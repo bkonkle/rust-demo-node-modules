@@ -1,22 +1,26 @@
 #![allow(missing_docs)]
 
 use serde::{Deserialize, Serialize};
+use wasm_bindgen::prelude::*;
 
 /// Registered claims defined by [RFC7519#4.1](https://tools.ietf.org/html/rfc7519#section-4.1)
-/// Converted to a NAPI-friendly format
-#[napi(object)]
+/// Converted to a wasm-bindgen-friendly format
+#[wasm_bindgen]
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, Default)]
 pub struct RegisteredClaims {
     /// Token issuer. Serialized to `iss`.
     #[serde(rename = "iss", skip_serializing_if = "Option::is_none")]
+    #[wasm_bindgen(getter_with_clone)]
     pub issuer: Option<String>,
 
     /// Subject where the JWT is referring to. Serialized to `sub`
     #[serde(rename = "sub", skip_serializing_if = "Option::is_none")]
+    #[wasm_bindgen(getter_with_clone)]
     pub subject: Option<String>,
 
     /// Audience intended for the JWT. Serialized to `aud`
     #[serde(rename = "aud", skip_serializing_if = "Option::is_none")]
+    #[wasm_bindgen(getter_with_clone)]
     pub audience: Option<Vec<String>>,
 
     /// Expiration time in seconds since Unix Epoch. Serialized to `exp`
@@ -33,6 +37,7 @@ pub struct RegisteredClaims {
 
     /// Application specific JWT ID. Serialized to `jti`
     #[serde(rename = "jti", skip_serializing_if = "Option::is_none")]
+    #[wasm_bindgen(getter_with_clone)]
     pub id: Option<String>,
 }
 

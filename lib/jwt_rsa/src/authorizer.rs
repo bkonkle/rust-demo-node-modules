@@ -7,39 +7,41 @@ use biscuit::{
     ClaimsSet, Empty, JWT,
 };
 use derive_new::new;
-use napi::Status;
+use wasm_bindgen::prelude::*;
 
 use super::{outputs::RegisteredClaims, Error};
 
 const BEARER: &str = "Bearer ";
 
 /// Authorizer
+#[wasm_bindgen]
 #[derive(new)]
-#[napi(js_name = "Authorizer")]
 pub struct Authorizer {
     /// The token audience
+    #[wasm_bindgen(getter_with_clone)]
     pub audience: String,
 
     /// The authorization URL to use
+    #[wasm_bindgen(getter_with_clone)]
     pub auth_url: String,
 
     /// The JSON Web Key Set
     jwks: JWKSet<Empty>,
 }
 
-#[napi]
+#[wasm_bindgen]
 impl Authorizer {
     /// Initialize the authorizer
-    #[napi(factory)]
-    pub async fn init(audience: String, auth_url: String) -> napi::Result<Self> {
+    #[wasm_bindgen]
+    pub async fn init(audience: String, auth_url: String) -> Result<Authorizer, Error> {
         let response = reqwest::get(format!("{}/.well-known/jwks.json", auth_url))
             .await
-            .map_err(|e| napi::Error::new(Status::InvalidArg, e.to_string()))?;
+            .map_err(|_| Error::JWKSVerification)?;
 
         let jwks = response
             .json::<JWKSet<Empty>>()
             .await
-            .map_err(|e| napi::Error::new(Status::InvalidArg, e.to_string()))?;
+            .map_err(|_| Error::JWKSVerification)?;
 
         println!("JWK set with {} keys retrieved\n", jwks.keys.len());
 
@@ -47,28 +49,21 @@ impl Authorizer {
     }
 
     /// Authorize the request
-    #[napi]
-    pub fn authorize(&self, auth_header: String) -> napi::Result<RegisteredClaims> {
-        let jwt = jwt_from_header(auth_header)
-            .map_err(|err| napi::Error::new(Status::Unknown, err.to_string()))?
-            .ok_or(napi::Error::new(
-                Status::Unknown,
-                "No JWT found".to_string(),
-            ))?;
+    #[wasm_bindgen]
+    pub fn authorize(&self, auth_header: String) -> Result<RegisteredClaims, Error> {
+        let jwt = jwt_from_header(auth_header)?.ok_or(Error::MissingToken)?;
 
-        let claims = self
-            .get_payload(&jwt)
-            .map_err(|e| napi::Error::new(Status::Unknown, e.to_string()))?;
+        let claims = self.get_payload(&jwt)?;
 
         Ok(claims.registered.into())
     }
 
     /// Get a validated payload from a JWT string
-    pub fn get_payload(&self, jwt: &str) -> Result<ClaimsSet<Empty>, Error> {
+    fn get_payload(&self, jwt: &str) -> Result<ClaimsSet<Empty>, Error> {
         // First extract without verifying the header to locate the key-id (kid)
         let token = JWT::<Empty, Empty>::new_encoded(jwt);
 
-        let header: Header<Empty> = token.unverified_header().map_err(Error::JWTToken)?;
+        let header: Header<Empty> = token.unverified_header().map_err(|_| Error::JWTToken)?;
 
         let key_id = header.registered.key_id.ok_or(Error::JWKSVerification)?;
 
@@ -81,9 +76,9 @@ impl Authorizer {
         // Now fully verify and extract the token
         let token = token
             .into_decoded(&secret, SignatureAlgorithm::RS256)
-            .map_err(Error::JWTToken)?;
+            .map_err(|_| Error::JWTToken)?;
 
-        let payload = token.payload().map_err(Error::JWTToken)?;
+        let payload = token.payload().map_err(|_| Error::JWTToken)?;
 
         debug!(
             "Successfully verified token with subject: {:?}",
