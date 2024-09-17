@@ -49,6 +49,6 @@ Thumbs.db
 .nx/cache
 .nx/workspace-data
 
-#Added by cargo
+# Added by cargo
 /target
 Cargo.lock

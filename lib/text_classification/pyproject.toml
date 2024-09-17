@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "text-classification"
+version = "0.0.1"
+description = "Simple text classification training workflow"
+authors = ["Brandon Konkle <brandon@konkle.us>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+torch = "^2.4.1"
+transformers = "^4.44.2"
+datasets = "^3.0.0"
+numpy = "^2.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
