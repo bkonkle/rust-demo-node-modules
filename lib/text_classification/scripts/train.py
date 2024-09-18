@@ -39,7 +39,7 @@ def main(args: Namespace):
 
     # Convert to ONNX
     ort_model = ORTModelForSequenceClassification.from_pretrained(
-        f"{model_dir}/", export=True, local_files_only=True
+        model_dir, export=True, local_files_only=True
     )
     ort_model.save_pretrained(model_dir)
 

@@ -11,7 +11,7 @@ import {jwtCheck} from './jwt.js'
 export async function main() {
   const app = new Koa()
 
-  const router = initRouter()
+  const router = await initRouter()
 
   const port = Number(process.env['PORT'] ?? 3000)
 
