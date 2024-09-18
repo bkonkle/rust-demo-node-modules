@@ -1,3 +1,4 @@
+import os
 import logging
 from typing import List, Dict
 
@@ -40,10 +41,21 @@ class Trainer(object):
         num_epochs: int,
         data_dir: str,
     ):
-        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-        tokenized_dataset = dataset.map(process_with(self.tokenizer), batched=True)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            MODEL_ID,
+            clean_up_tokenization_spaces=False,
+        )
 
         class_feature = ClassLabel(names=labels)
+
+        dataset = dataset.cast_column("intent", class_feature)
+        dataset = dataset.rename_column("intent", "labels")
+        dataset = dataset.rename_column("input", "text")
+        dataset = dataset.map(process_with(self.tokenizer), batched=True)
+
+        dataset.remove_columns(["slots"])
+
+        self.dataset = dataset
 
         self.num_labels = len(labels)
 
@@ -52,17 +64,16 @@ class Trainer(object):
             self.label2id[label] = str(i)
             self.id2label[str(i)] = label
 
-        self.dataset = tokenized_dataset.cast_column("intent", class_feature)
         self.labels = labels
         self.batch_size = batch_size
         self.num_epochs = num_epochs
         self.data_dir = data_dir
 
-    def train(self):
+    def train(self) -> str:
         tracing_steps = (
             len(self.dataset["train"]) // self.batch_size
         ) * self.num_epochs
-        print("tracing_steps: ", tracing_steps)
+
         tracing = "steps"
 
         output_dir = f"{self.data_dir}/snips-bert"
@@ -114,10 +125,19 @@ class Trainer(object):
 
         trainer.train()
 
+        trainer.save_model(output_dir)
+        self.tokenizer.save_pretrained(output_dir)
+
+        return output_dir
+
 
 def process_with(tokenizer: PreTrainedTokenizer | PreTrainedTokenizerFast):
     def process(examples):
-        tokenized_inputs = tokenizer(examples["input"], truncation=True, max_length=512)
+        tokenized_inputs = tokenizer(
+            examples["text"],
+            truncation=True,
+            max_length=512,
+        )
 
         return tokenized_inputs
 

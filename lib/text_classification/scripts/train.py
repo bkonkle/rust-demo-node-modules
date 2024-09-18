@@ -3,10 +3,11 @@ from argparse import Namespace
 from pathlib import Path
 from typing import Optional
 
-from trainer import Trainer
-from utils import init_logger, set_seed
+from text_classification.trainer import Trainer
+from text_classification.utils import init_logger, set_seed
 from datasets import load_dataset, DatasetDict
 from huggingface_hub import hf_hub_download
+from optimum.onnxruntime import ORTModelForSequenceClassification
 
 
 def main(args: Namespace):
@@ -34,7 +35,13 @@ def main(args: Namespace):
         labels = list(filter(None, (line.strip() for line in file)))
 
     trainer = Trainer(dataset, labels, args.batch_size, args.num_epochs, args.data_dir)
-    trainer.train()
+    model_dir = trainer.train()
+
+    # Convert to ONNX
+    ort_model = ORTModelForSequenceClassification.from_pretrained(
+        f"{model_dir}/", export=True, local_files_only=True
+    )
+    ort_model.save_pretrained(model_dir)
 
 
 if __name__ == "__main__":
@@ -54,7 +61,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--num-epochs",
         default=10,
-        type=float,
+        type=int,
         help="Number of epochs to train for",
     )
 

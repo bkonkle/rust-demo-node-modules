@@ -10,10 +10,12 @@ python = "^3.12"
 torch = "^2.4.1"
 transformers = "^4.44.2"
 datasets = "^3.0.0"
-numpy = "^2.1.1"
+numpy = "^1.26.4"
+optimum = { extras = ["onnxruntime", "exporters"], version = "^1.22.0" }
 huggingface-hub = "^0.25.0"
 evaluate = "^0.4.3"
 accelerate = "^0.34.2"
+scikit-learn = "^1.5.2"
 
 
 [build-system]
