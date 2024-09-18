@@ -5,9 +5,8 @@ from typing import Optional
 
 from trainer import Trainer
 from utils import init_logger, set_seed
-from datasets import load_dataset, Dataset, DatasetDict
-
-from transformers import AutoTokenizer, PreTrainedTokenizer, PreTrainedTokenizerFast
+from datasets import load_dataset, DatasetDict
+from huggingface_hub import hf_hub_download
 
 
 def main(args: Namespace):
@@ -25,24 +24,17 @@ def main(args: Namespace):
     if not isinstance(dataset, DatasetDict):
         raise ValueError("dataset must be a DatasetDict")
 
-    train_dataset = dataset["train"]
+    labels_file = hf_hub_download(
+        repo_id="bkonkle/snips-joint-intent",
+        filename="intent_labels.txt",
+        repo_type="dataset",
+    )
 
-    print("Train dataset", train_dataset)
+    with open(labels_file, "r") as file:
+        labels = list(filter(None, (line.strip() for line in file)))
 
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-    tokenized_dataset = train_dataset.map(process(tokenizer), batched=True)
-
-    trainer = Trainer(tokenized_dataset, labels)
+    trainer = Trainer(dataset, labels, args.batch_size, args.num_epochs, args.data_dir)
     trainer.train()
-
-
-def process(tokenizer: PreTrainedTokenizer | PreTrainedTokenizerFast):
-    def process_inner(examples):
-        tokenized_inputs = tokenizer(examples["input"], truncation=True, max_length=512)
-
-        return tokenized_inputs
-
-    return process_inner
 
 
 if __name__ == "__main__":
