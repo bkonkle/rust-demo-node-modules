@@ -1,12 +1,12 @@
 import argparse
-import os
+import sys
+import logging
 from argparse import Namespace
 
-import torch
+from text_classification.inference import Inference
 from text_classification.utils import init_logger
-from text_classification.inference import infer
 
-MODEL_ID = "bert-base-uncased"
+logger = logging.getLogger(__name__)
 
 
 def main(args: Namespace):
@@ -15,22 +15,18 @@ def main(args: Namespace):
     if not isinstance(args.data_dir, str):
         raise ValueError("data-dir must be a string")
 
-    if not isinstance(args.input, list) or not all(
-        isinstance(i, str) for i in args.input
-    ):
-        raise ValueError("input must be a list of strings")
-
     model_dir = f"{args.data_dir}/snips-bert"
 
-    input = " ".join(args.input)
+    inference = Inference(model_dir)
 
-    prediction = infer(model_dir, input)
+    while True:
+        input_line = sys.stdin.readline().strip()
+        if not input_line:
+            break
 
-    print(f"Classification: {prediction}")
+        prediction = inference.infer(input_line)
 
-
-def get_args(pred_config):
-    return torch.load(os.path.join(pred_config.model_dir, "training_args.bin"))
+        print(prediction, file=sys.stdout)
 
 
 if __name__ == "__main__":
@@ -42,8 +38,6 @@ if __name__ == "__main__":
         type=str,
         help="The path to the top-level data directory (defaults to 'data')",
     )
-
-    parser.add_argument("input", nargs="+", help="The input to query the model with")
 
     args = parser.parse_args()
 
