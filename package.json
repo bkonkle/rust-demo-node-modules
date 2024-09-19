@@ -40,9 +40,7 @@
     "koa-bodyparser": "^4.4.1",
     "koa-helmet": "^7.0.2",
     "koa-jwt": "^4.0.4",
-    "koa-morgan": "^1.0.1",
-    "onnxruntime-node": "^1.19.2",
-    "tokenizers": "https://gitpkg.now.sh/huggingface/tokenizers/bindings/node?81c471c"
+    "koa-morgan": "^1.0.1"
   },
   "devDependencies": {
     "@types/autocannon": "^7.12.5",
@@ -54,7 +52,6 @@
     "@types/koa-morgan": "^1.0.8",
     "@types/node": "~22.5.4",
     "autocannon": "^7.15.0",
-    "onnxruntime-common": "^1.19.2",
     "prettier": "^3.0.3",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2",

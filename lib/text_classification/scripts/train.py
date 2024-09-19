@@ -7,7 +7,6 @@ from text_classification.trainer import Trainer
 from text_classification.utils import init_logger, set_seed
 from datasets import load_dataset, DatasetDict
 from huggingface_hub import hf_hub_download
-from optimum.onnxruntime import ORTModelForSequenceClassification
 
 
 def main(args: Namespace):
@@ -37,11 +36,7 @@ def main(args: Namespace):
     trainer = Trainer(dataset, labels, args.batch_size, args.num_epochs, args.data_dir)
     model_dir = trainer.train()
 
-    # Convert to ONNX
-    ort_model = ORTModelForSequenceClassification.from_pretrained(
-        model_dir, export=True, local_files_only=True
-    )
-    ort_model.save_pretrained(model_dir)
+    print("Model saved to:", model_dir)
 
 
 if __name__ == "__main__":
