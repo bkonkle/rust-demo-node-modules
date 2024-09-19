@@ -28,7 +28,9 @@
     "dev": "tsx src/main.ts",
     "token": "tsx bin/token.ts",
     "bench": "tsx bin/bench.ts",
-    "build.jwt-rsa": "cd lib/jwt_rsa && napi build --platform --release"
+    "build.rs": "npm run build.jwt-rsa && npm run build.text-classification",
+    "build.jwt-rsa": "cd lib/jwt_rsa && napi build --platform --release",
+    "build.text-classification": "cd lib/text_classification_rs && napi build --platform --release"
   },
   "dependencies": {
     "@koa/cors": "^5.0.0",

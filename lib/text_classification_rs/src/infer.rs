@@ -35,10 +35,16 @@ impl Inference {
     /// Create a new instance of Inference
     #[napi(factory)]
     pub fn from_data_dir(data_dir: String) -> napi::Result<Self> {
+        println!(">- data_dir -> {:?}", data_dir);
+
         let model_dir = format!("{}/snips-bert", data_dir);
+
+        println!(">- model_dir -> {:?}", model_dir);
 
         let config = Config::load(format!("{model_dir}/config.json").as_str())
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+
+        println!(">------ config ------<");
 
         let tokenizer = Tokenizer::from_pretrained("{model_dir}/tokenizer.json", None)
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
