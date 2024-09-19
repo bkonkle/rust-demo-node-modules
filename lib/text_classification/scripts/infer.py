@@ -4,9 +4,7 @@ from argparse import Namespace
 
 import torch
 from text_classification.utils import init_logger
-from text_classification.inference import infer
-
-MODEL_ID = "bert-base-uncased"
+from text_classification.inference import Inference
 
 
 def main(args: Namespace):
@@ -22,9 +20,8 @@ def main(args: Namespace):
 
     model_dir = f"{args.data_dir}/snips-bert"
 
-    input = " ".join(args.input)
-
-    prediction = infer(model_dir, input)
+    inference = Inference(model_dir)
+    prediction = inference.infer(" ".join(args.input))
 
     print(f"Classification: {prediction}")
 

@@ -15,7 +15,7 @@ const BEARER: &str = "Bearer ";
 
 /// Authorizer
 #[derive(new)]
-#[napi(js_name = "Authorizer")]
+#[napi]
 pub struct Authorizer {
     /// The token audience
     pub audience: String,

@@ -2,3 +2,8 @@ export AUTH_CLIENT_ID=my-client-id
 export AUTH_AUDIENCE=localhost
 export AUTH_URL=https://auth.example.com
 export USE_RUST_MODULE=true
+
+export LIBTORCH=~/lib/libtorch
+export LD_LIBRARY_PATH=${LIBTORCH}/lib:$LD_LIBRARY_PATH
+
+export LIBTORCH_BYPASS_VERSION_CHECK=1

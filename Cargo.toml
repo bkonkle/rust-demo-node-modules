@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["lib/jwt_rsa"]
+members = ["lib/jwt_rsa", "lib/text_classification_rs"]
 exclude = ["node_modules/tokenizers"]
 
 [workspace.package]
