@@ -5,5 +5,3 @@ export USE_RUST_MODULE=true
 
 export LIBTORCH=~/lib/libtorch
 export LD_LIBRARY_PATH=${LIBTORCH}/lib:$LD_LIBRARY_PATH
-
-export LIBTORCH_BYPASS_VERSION_CHECK=1

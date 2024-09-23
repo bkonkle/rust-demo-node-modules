@@ -21,7 +21,7 @@ pub enum Error {
     #[error("JWK verification failed")]
     JWKSVerification,
 
-    /// An error occured while attempting to resolve the Validator dependency
-    #[error("Missing Validator dependency")]
-    MissingValidator,
+    /// An error occured while attempting to validate the token
+    #[error("JWK validation failed")]
+    JWKSValidation,
 }

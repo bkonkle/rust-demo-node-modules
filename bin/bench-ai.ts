@@ -21,7 +21,7 @@ export async function main() {
 
   const result = await autocannon({
     url: `http://localhost:${port}`,
-    connections: 20,
+    connections: 1,
     duration: 10,
     workers,
     requests: [

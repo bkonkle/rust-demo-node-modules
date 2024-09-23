@@ -54,31 +54,14 @@ Run the local dev server with the rust module enabled:
 USE_RUST_MODULE=true npm run dev
 ```
 
-## Set up Torch for Text Classification
+## Virtualenv
 
-Set up CUDA using the [NVidia guide](https://developer.nvidia.com/cuda-downloads).
-
-Download [LibTorch](https://pytorch.org/get-started/locally/) for Linux and C++/Java, and save it to `~/lib/libtorch`:
+You'll need to create and activate a virtualenv for dependencies like "torch" to be available. With Poetry:
 
 ```sh
-export VERSION=2.2.2
-export CUDA_VERSION=cu121
+npm run poetry install
 
-wget https://download.pytorch.org/libtorch/$CUDA_VERSION/libtorch-cxx11-abi-shared-with-deps-$VERSION%2B$CUDA_VERSION.zip
-unzip libtorch-cxx11-abi-shared-with-deps-$VERSION+$CUDA_VERSION.zip
-rm libtorch-cxx11-abi-shared-with-deps-$VERSION+$CUDA_VERSION.zip
-
-mkdir -p ~/lib
-mv libtorch ~/lib/
-```
-
-Then, add the following values to your `.envrc` (as shown in the example):
-
-```sh
-export LIBTORCH=~/lib/libtorch
-export LD_LIBRARY_PATH=${LIBTORCH}/lib:$LD_LIBRARY_PATH
-
-export LIBTORCH_BYPASS_VERSION_CHECK=1
+source $(npm run --silent poetry-path)/bin/activate
 ```
 
 ## Run Benchmarks

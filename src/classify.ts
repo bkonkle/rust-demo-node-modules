@@ -1,8 +1,9 @@
+/* eslint-disable capitalized-comments */
 import process from 'node:process'
-import path from 'node:path'
+// import path from 'node:path'
 import type {Context} from 'koa'
-import python from 'node-calls-python'
-import {Inference} from '../lib/text_classification_rs/index.js'
+import {interpreter as py} from 'node-calls-python'
+// import {Inference} from '../lib/text_classification_rs/index.js'
 
 export async function classifyText() {
   const useRustModule = process.env['USE_RUST_MODULE'] === 'true'
@@ -16,13 +17,14 @@ export async function classifyText() {
 }
 
 export async function classifyTextWithPython() {
-  const py = python.interpreter
-
   const libraryPath = './lib/text_classification'
   const modelPath = `${libraryPath}/data/snips-bert`
 
-  const pyModule = await py.import(`${libraryPath}/inference.py`, false)
-  const inference = await py.create(pyModule, 'Inference', [modelPath])
+  const pyModule = await py.import(
+    `${libraryPath}/src/text_classification/inference.py`,
+    false
+  )
+  const inference = await py.create(pyModule, 'Inference', modelPath)
 
   return async (context: Context): Promise<void> => {
     const data: {text?: string} = context.request.body ?? {}
@@ -34,7 +36,7 @@ export async function classifyTextWithPython() {
       return
     }
 
-    const result = await py.call(inference, 'infer', [data.text])
+    const result = await py.call(inference, 'infer', data.text)
 
     context.status = 200
     context.body = result as string
@@ -42,9 +44,11 @@ export async function classifyTextWithPython() {
 }
 
 export async function classifyTextWithRust() {
-  const inference = Inference.fromDataDir(
-    path.resolve('./lib/text_classification/data')
-  )
+  console.log(`>- dodododo ->`)
+
+  // const inference = Inference.fromDataDir(
+  //   path.resolve('./lib/text_classification/data')
+  // )
 
   return async (context: Context): Promise<void> => {
     const data: {text?: string} = context.request.body ?? {}
@@ -56,9 +60,9 @@ export async function classifyTextWithRust() {
       return
     }
 
-    const response = inference.infer(data.text)
+    // const response = inference.infer(data.text)
 
     context.status = 200
-    context.body = response
+    // context.body = response
   }
 }
