@@ -7,14 +7,12 @@ use burn::{
     backend::{libtorch::LibTorchDevice, Autodiff, LibTorch},
     config::Config as _,
     data::dataloader::batcher::Batcher as _,
-    module::Module,
-    record::{CompactRecorder, Recorder},
 };
 use burn_transformers::{
     models::bert::text_classification::{Config, Model},
     pipelines::sequence_classification::{
         self,
-        text_classification::{Batcher, ModelConfig},
+        text_classification::{Batcher, Model as _, ModelConfig},
     },
 };
 use derive_new::new;
@@ -35,34 +33,27 @@ impl Inference {
     /// Create a new instance of Inference
     #[napi(factory)]
     pub fn from_data_dir(data_dir: String) -> napi::Result<Self> {
-        println!(">- data_dir -> {:?}", data_dir);
-
         let model_dir = format!("{}/snips-bert", data_dir);
-
-        println!(">- model_dir -> {:?}", model_dir);
 
         let config = Config::load(format!("{model_dir}/config.json").as_str())
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
 
-        println!(">------ config ------<");
-
-        let tokenizer = Tokenizer::from_pretrained("{model_dir}/tokenizer.json", None)
+        let tokenizer = Tokenizer::from_pretrained("bert-base-uncased", None)
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
 
         let device = LibTorchDevice::Cuda(0);
 
-        let record = CompactRecorder::new()
-            .load(format!("{model_dir}/model").into(), &device)
-            .map_err(|e| {
-                napi::Error::from_reason(format!("Unable to load trained model weights: {}", e))
-            })?;
+        let seq_classify_config = config.get_config();
 
-        let model = config
-            .init::<Autodiff<LibTorch>>(&device)
-            .load_record(record);
+        let model = Model::load_from_safetensors(
+            &device,
+            format!("{model_dir}/model.safetensors").into(),
+            config,
+        )
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
 
         Ok(Self {
-            config: config.get_config(),
+            config: seq_classify_config,
             device,
             tokenizer,
             model,

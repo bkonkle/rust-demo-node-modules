@@ -1,13 +1,13 @@
 import process from 'node:process'
 import path from 'node:path'
-import {type ChildProcessWithoutNullStreams, spawn} from 'node:child_process'
 import type {Context} from 'koa'
+import python from 'node-calls-python'
 import {Inference} from '../lib/text_classification_rs/index.js'
 
 export async function classifyText() {
   const useRustModule = process.env['USE_RUST_MODULE'] === 'true'
   if (useRustModule) {
-    console.log('Using the Rust Module for JWT verification\n')
+    console.log('Using the Rust Module for Text Classification\n')
 
     return classifyTextWithRust()
   }
@@ -16,17 +16,13 @@ export async function classifyText() {
 }
 
 export async function classifyTextWithPython() {
-  const infer = spawn('python', ['-u', '-i', 'scripts/run_infer.py'], {
-    cwd: 'lib/text_classification',
-  })
+  const py = python.interpreter
 
-  infer.stdout.on('data', (data: Uint16Array) => {
-    console.log(`Python stdout: ${data.toString()}`)
-  })
+  const libraryPath = './lib/text_classification'
+  const modelPath = `${libraryPath}/data/snips-bert`
 
-  infer.stderr.on('data', (data: Uint16Array) => {
-    console.error(`Python stderr: ${data.toString()}`)
-  })
+  const pyModule = await py.import(`${libraryPath}/inference.py`, false)
+  const inference = await py.create(pyModule, 'Inference', [modelPath])
 
   return async (context: Context): Promise<void> => {
     const data: {text?: string} = context.request.body ?? {}
@@ -38,31 +34,11 @@ export async function classifyTextWithPython() {
       return
     }
 
-    const response = await sendToPython(infer, data.text)
+    const result = await py.call(inference, 'infer', [data.text])
 
     context.status = 200
-    context.body = response
+    context.body = result as string
   }
-}
-
-async function sendToPython(
-  infer: ChildProcessWithoutNullStreams,
-  input: string
-): Promise<string> {
-  return new Promise((resolve, reject) => {
-    // Send input to Python process
-    infer.stdin.write(`${input}\n`)
-
-    // Listen for Python's response
-    infer.stdout.once('data', (data: Uint16Array) => {
-      resolve(data.toString().trim())
-    })
-
-    // Handle errors
-    infer.stderr.once('data', (data: Uint16Array) => {
-      reject(new Error(data.toString().trim()))
-    })
-  })
 }
 
 export async function classifyTextWithRust() {
