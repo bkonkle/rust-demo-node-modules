@@ -9,7 +9,7 @@ class Inference(object):
     classifier: Pipeline
 
     def __init__(self, model_dir: str):
-        device = torch.device("cpu")
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.classifier = pipeline(
             "text-classification", model=model_dir, device=device
