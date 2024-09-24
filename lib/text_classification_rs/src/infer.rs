@@ -1,31 +1,21 @@
 #![allow(missing_docs)]
 
-use std::sync::Arc;
+use std::path::PathBuf;
 
-use bert_burn::data::BertInferenceBatch;
-use burn::{
-    backend::{libtorch::LibTorchDevice, Autodiff, LibTorch},
-    config::Config as _,
-    data::dataloader::batcher::Batcher as _,
-};
-use burn_transformers::{
-    models::bert::text_classification::{Config, Model},
-    pipelines::sequence_classification::{
-        self,
-        text_classification::{Batcher, Model as _, ModelConfig},
-    },
-};
 use derive_new::new;
-use tokenizers::Tokenizer;
+use rust_bert::{
+    pipelines::{
+        common::{ModelResource, ModelType},
+        sequence_classification::{SequenceClassificationConfig, SequenceClassificationModel},
+    },
+    resources::LocalResource,
+};
 
 /// Inference class for text classification
 #[napi]
-#[derive(Clone, new)]
+#[derive(new)]
 pub struct Inference {
-    config: sequence_classification::Config,
-    device: LibTorchDevice,
-    tokenizer: Tokenizer,
-    model: Model<Autodiff<LibTorch>>,
+    model: SequenceClassificationModel,
 }
 
 #[napi]
@@ -35,57 +25,31 @@ impl Inference {
     pub fn from_data_dir(data_dir: String) -> napi::Result<Self> {
         let model_dir = format!("{}/snips-bert", data_dir);
 
-        let config = Config::load(format!("{model_dir}/config.json").as_str())
-            .map_err(|e| napi::Error::from_reason(e.to_string()))?;
-
-        let tokenizer = Tokenizer::from_pretrained("bert-base-uncased", None)
-            .map_err(|e| napi::Error::from_reason(e.to_string()))?;
-
-        let device = LibTorchDevice::Cuda(0);
-
-        let seq_classify_config = config.get_config();
-
-        let model = Model::load_from_safetensors(
-            &device,
-            format!("{model_dir}/model.safetensors").into(),
-            config,
-        )
+        let model = SequenceClassificationModel::new(SequenceClassificationConfig {
+            model_type: ModelType::Bert,
+            model_resource: ModelResource::Torch(Box::new(LocalResource::from(PathBuf::from(
+                format!("{}/rust_model.ot", model_dir),
+            )))),
+            config_resource: Box::new(LocalResource::from(PathBuf::from(format!(
+                "{}/config.json",
+                model_dir
+            )))),
+            vocab_resource: Box::new(LocalResource::from(PathBuf::from(format!(
+                "{}/vocab.txt",
+                model_dir
+            )))),
+            ..Default::default()
+        })
         .map_err(|e| napi::Error::from_reason(e.to_string()))?;
 
-        Ok(Self {
-            config: seq_classify_config,
-            device,
-            tokenizer,
-            model,
-        })
+        Ok(Self { model })
     }
 
     /// Infer the class of the input text
     #[napi]
     pub fn infer(&self, input: String) -> napi::Result<String> {
-        let input: Vec<String> = vec![input];
+        let output = self.model.predict(vec![input.as_str()]);
 
-        let batcher = Arc::new(Batcher::<Autodiff<LibTorch>>::new(
-            self.tokenizer.clone(),
-            self.config.clone(),
-            self.device.clone(),
-        ));
-
-        let item = batcher.batch(input);
-
-        let predictions = self.model.infer(BertInferenceBatch {
-            tokens: item.tokens,
-            mask_pad: item.mask_pad,
-        });
-        let prediction = predictions.slice([0..1]);
-
-        let class_indexes = prediction.argmax(1).into_data().convert::<i64>().value;
-
-        let classes = class_indexes
-            .into_iter()
-            .map(|index| &self.config.id2label[&(index as usize)])
-            .collect::<Vec<_>>();
-
-        Ok((*classes.first().unwrap()).to_string())
+        Ok(output[0].text.clone())
     }
 }

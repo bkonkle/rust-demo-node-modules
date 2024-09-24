@@ -28,7 +28,7 @@ class Trainer(object):
     data_dir: str
 
     num_labels: int
-    label2id: Dict[str, str]
+    label2id: Dict[str, int]
     id2label: Dict[str, str]
     tokenizer: PreTrainedTokenizer | PreTrainedTokenizerFast
 
@@ -60,7 +60,7 @@ class Trainer(object):
 
         self.label2id, self.id2label = dict(), dict()
         for i, label in enumerate(labels):
-            self.label2id[label] = str(i)
+            self.label2id[label] = i
             self.id2label[str(i)] = label
 
         self.labels = labels
@@ -95,6 +95,7 @@ class Trainer(object):
             save_strategy=tracing,
             save_steps=tracing_steps,
             save_total_limit=2,
+            save_safetensors=False,
             load_best_model_at_end=True,
             metric_for_best_model="f1",
         )

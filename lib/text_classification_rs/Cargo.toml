@@ -14,12 +14,6 @@ crate-type = ["cdylib"]
 
 [dependencies]
 anyhow = "1.0"
-bert-burn = { git = "https://github.com/tracel-ai/models", package = "bert-burn", features = [
-  "safetensors",
-  "tch-gpu",
-] }
-burn = { version = "0.13", features = ["train", "tch", "metrics"] }
-burn-transformers = { git = "https://github.com/bkonkle/burn-transformers" }
 derive-new = "0.7.0"
 log = "0.4"
 napi = { version = "2.12.2", default-features = false, features = [
@@ -27,15 +21,12 @@ napi = { version = "2.12.2", default-features = false, features = [
   "async",
 ] }
 napi-derive = "2.12.2"
+rust-bert = { git = "https://github.com/guillaume-be/rust-bert", rev = "5c638eb" }
 serde = { version = "1.0", features = ["derive"] }
 serde_derive = "1.0"
 serde_json = "1.0"
 thiserror = "1.0"
 tokio = { version = "1", features = ["full"] }
-tokenizers = { version = "0.19", default-features = false, features = [
-  "onig",
-  "http",
-] }
 
 [build-dependencies]
 napi-build = "2.0.1"
