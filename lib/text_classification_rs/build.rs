@@ -1,4 +1,4 @@
-//! Build setup for the `jwt-rsa` crate
+//! Build setup for the `text-classification` crate
 
 #[allow(unused_extern_crates)]
 extern crate napi_build;

@@ -1,10 +1,11 @@
 import Router from '@koa/router'
 import type {Context} from 'koa'
+import {classifyText} from './classify.js'
 
-export function initRouter(): Router {
+export async function initRouter(): Promise<Router> {
   const router = new Router()
-
-  router.get('/me', getUser)
+    .get('/me', getUser)
+    .post('/classify', await classifyText())
 
   return router
 }

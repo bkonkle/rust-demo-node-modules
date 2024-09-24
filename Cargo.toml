@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
-members = ["lib/jwt_rsa"]
+members = ["lib/jwt_rsa", "lib/text_classification_rs"]
+exclude = ["node_modules/tokenizers"]
 
 [workspace.package]
 license = "MIT"
@@ -8,6 +9,7 @@ edition = "2021"
 authors = ["Brandon Konkle <brandon@konkle.us>"]
 homepage = "https://github.com/bkonkle/rust-demo-node-modules"
 repository = "https://github.com/bkonkle/rust-demo-node-modules"
+
 
 [profile.release]
 strip = true      # Automatically strip symbols from the binary.

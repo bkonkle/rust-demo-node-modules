@@ -28,7 +28,13 @@
     "dev": "tsx src/main.ts",
     "token": "tsx bin/token.ts",
     "bench": "tsx bin/bench.ts",
-    "build.jwt-rsa": "cd lib/jwt_rsa && napi build --platform --release"
+    "bench-ai": "tsx bin/bench-ai.ts",
+    "build-rs": "npm run build.jwt-rsa && npm run build.text-classification",
+    "build-jwt-rsa": "cd lib/jwt_rsa && napi build --platform --release",
+    "train-text-classification": "cd lib/text_classification && python ./scripts/train.py",
+    "build-text-classification": "cd lib/text_classification_rs && napi build --platform --release",
+    "poetry": "poetry --directory ./lib/text_classification",
+    "poetry-path": "poetry --directory ./lib/text_classification env info --path"
   },
   "dependencies": {
     "@koa/cors": "^5.0.0",
@@ -40,7 +46,8 @@
     "koa-bodyparser": "^4.4.1",
     "koa-helmet": "^7.0.2",
     "koa-jwt": "^4.0.4",
-    "koa-morgan": "^1.0.1"
+    "koa-morgan": "^1.0.1",
+    "node-calls-python": "^1.10.1"
   },
   "devDependencies": {
     "@types/autocannon": "^7.12.5",

@@ -1,0 +1,32 @@
+[package]
+name = "text-classification"
+version = "0.0.1"
+description = "An inference service for text classification"
+documentation = "https://docs.rs/text-classification/"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+anyhow = "1.0"
+derive-new = "0.7.0"
+log = "0.4"
+napi = { version = "2.12.2", default-features = false, features = [
+  "napi4",
+  "async",
+] }
+napi-derive = "2.12.2"
+rust-bert = { git = "https://github.com/guillaume-be/rust-bert", rev = "5c638eb" }
+serde = { version = "1.0", features = ["derive"] }
+serde_derive = "1.0"
+serde_json = "1.0"
+thiserror = "1.0"
+tokio = { version = "1", features = ["full"] }
+
+[build-dependencies]
+napi-build = "2.0.1"
