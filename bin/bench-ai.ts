@@ -1,5 +1,5 @@
 import process from 'node:process'
-import os from 'node:os'
+import path from 'node:path'
 import autocannon from 'autocannon'
 import esMain from 'es-main'
 
@@ -17,13 +17,11 @@ export async function main() {
 
   console.log(`Running benchmark targeting port ${port}...`)
 
-  const workers = os.cpus().length / 2
-
   const result = await autocannon({
     url: `http://localhost:${port}`,
-    connections: 1,
+    connections: 20,
     duration: 10,
-    workers,
+    workers: 4,
     requests: [
       {
         method: 'POST',
@@ -32,9 +30,7 @@ export async function main() {
           Authorization: token, // eslint-disable-line @typescript-eslint/naming-convention
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          text: 'listen to westbam alumb allergic on google music',
-        }),
+        setupRequest: path.join(import.meta.dirname, './setup-ai-request'),
       },
     ],
   })
