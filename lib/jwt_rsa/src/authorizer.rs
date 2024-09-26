@@ -1,7 +1,5 @@
 #![allow(missing_docs)]
 
-use std::str::from_utf8;
-
 use biscuit::{
     jwa::SignatureAlgorithm,
     jwk::{AlgorithmParameters, JWKSet, JWK},
@@ -9,7 +7,6 @@ use biscuit::{
     ClaimPresenceOptions, ClaimsSet, Empty, ValidationOptions, JWT,
 };
 use derive_new::new;
-use napi::bindgen_prelude::Buffer;
 
 use super::{outputs::RegisteredClaims, Error};
 
@@ -50,11 +47,8 @@ impl Authorizer {
 
     /// Authorize the request
     #[napi]
-    pub fn authorize(&self, auth_header: Buffer) -> napi::Result<RegisteredClaims> {
-        let auth_header =
-            from_utf8(&auth_header).map_err(|e| napi::Error::from_reason(e.to_string()))?;
-
-        let jwt = jwt_from_header(auth_header)
+    pub fn authorize(&self, auth_header: String) -> napi::Result<RegisteredClaims> {
+        let jwt = jwt_from_header(&auth_header)
             .map_err(|err| napi::Error::from_reason(err.to_string()))?
             .ok_or(napi::Error::from_reason("No JWT found".to_string()))?;
 
