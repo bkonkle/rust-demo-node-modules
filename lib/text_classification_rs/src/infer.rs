@@ -51,8 +51,12 @@ impl Inference {
     pub fn infer(&self, input: Buffer) -> napi::Result<Buffer> {
         let input = from_utf8(&input).map_err(|e| napi::Error::from_reason(e.to_string()))?;
 
-        let output = self.model.predict(vec![input]);
+        let output = self
+            .model
+            .predict(vec![input])
+            .pop()
+            .ok_or_else(|| napi::Error::from_reason("No model output was received"))?;
 
-        Ok(output[0].text.clone().into())
+        Ok(output.text.into())
     }
 }
