@@ -30,7 +30,10 @@ export async function main() {
           Authorization: token, // eslint-disable-line @typescript-eslint/naming-convention
           'Content-Type': 'application/json',
         },
-        setupRequest: path.join(import.meta.dirname, './setup-ai-request'),
+        setupRequest: path.join(
+          import.meta.dirname,
+          './hooks/setup-ai-request'
+        ),
       },
     ],
   })
