@@ -17,7 +17,7 @@ export async function classifyText() {
       return
     }
 
-    const response = inference.infer(data.text, 'utf8')
+    const response = inference.infer(data.text)
 
     context.status = 200
     context.body = response
