@@ -2,12 +2,12 @@ import path from 'node:path'
 import type {Context} from 'koa'
 import {Inference} from '../lib/text_classification_rs/index.js'
 
-export async function classifyText() {
+export function classifyText() {
   const inference = Inference.fromDataDir(
     path.resolve('./lib/text_classification/data')
   )
 
-  return async (context: Context): Promise<void> => {
+  return (context: Context): void => {
     const data: {text?: string} = context.request.body ?? {}
 
     if (!data.text) {
