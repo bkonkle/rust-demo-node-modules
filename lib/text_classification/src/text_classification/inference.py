@@ -24,3 +24,9 @@ class Inference(object):
             raise ValueError("Model returned an unexpected result")
 
         return result[0]["label"]
+
+
+def init(data_dir: str) -> Inference:
+    model_dir = f"{data_dir}/snips-bert"
+
+    return Inference(model_dir)
